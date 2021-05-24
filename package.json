@@ -46,7 +46,11 @@
       "pre-commit": "npm run pre-commit"
     }
   },
-  "keywords": [],
+  "keywords": [
+    "websocket",
+    "IO",
+    "connector"
+  ],
   "author": "huangdi<1013697816@qq.com>",
   "license": "MIT"
 }
