@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="./md5.js"></script>
+    <script src="./sign.js"></script>
+    <script src="../dist/index.js"></script>
+    <script>
+      BigoIO.baseURL = "ws://47.242.25.96:10000/websocket"
+      const IO = BigoIO.create({
+        url:
+          `/quote?_=${Date.now()}` +
+          "&_s=" +
+          MD5(`ws://47.242.25.96:10000/websocket/quote?_=${Date.now()}`),
+        reconnect: true,
+        warning: true,
+        forceDisconnectThreshold: 2000,
+        heartBeat: {
+          enable: true,
+          warning: true,
+          sendMessage: "ping",
+          receiveMessage: {
+            handle: "pong",
+            receivingStrategy: "match",
+            regExp: /^pong/,
+          },
+          heartStartFn() {
+            sendLog("ping==>ws重连成功")
+          },
+          heartColseFn() {
+            sendLog("ping==>ws异常中断")
+          },
+          heartFailFn() {
+            sendLog("ping==>ws重连失败")
+          },
+          sendInterval: 2000,
+          receiveInterval: 2000,
+        },
+        onOpen: () => {
+          console.log("open")
+          IO.send({
+            sub: "add",
+            type: "five",
+            topic: "ETH/USDT",
+          })
+        },
+        onClose: () => {
+          console.log("close")
+        },
+        onMessage: (e) => {},
+        onError: () => {
+          console.log("error")
+        },
+        onReconnecting: () => {
+          console.log("reconnecting")
+        },
+      })
+    </script>
+  </body>
+</html>
