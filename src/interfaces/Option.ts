@@ -22,10 +22,14 @@ interface Option {
     breakOffHandler?: Function
   }
   forceDisconnectThreshold?: number
-  onOpen?: Function
-  onClose?: Function
-  onMessage?: Function
-  onError?: Function
-  onReconnecting?: Function
+  hooks: {
+    onOpen?: Function
+    onClose?: Function
+    onMessage?: Function
+    onError?: Function
+    onReconnecting?: Function
+    onReconnected?: Function
+    onReconnectFailed?: Function
+  }
 }
 export default Option

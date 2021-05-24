@@ -20,6 +20,29 @@
         reconnect: true,
         warning: true,
         forceDisconnectThreshold: 2000,
+        hooks: {
+          onOpen: () => {
+            console.log("global onOpen")
+          },
+          onClose: () => {
+            console.log("global onClose")
+          },
+          onMessage: () => {
+            console.log("global onMessage")
+          },
+          onError: () => {
+            console.log("global onError")
+          },
+          onReconnecting: () => {
+            console.log("global onReconnecting")
+          },
+          onReconnected: () => {
+            console.log("global onReconnected")
+          },
+          onReconnectFailed: () => {
+            console.log("global onReconnectFailed")
+          },
+        },
         heartBeat: {
           enable: true,
           warning: true,
@@ -29,36 +52,36 @@
             receivingStrategy: "match",
             regExp: /^pong/,
           },
-          heartStartFn() {
-            sendLog("ping==>ws重连成功")
-          },
-          heartColseFn() {
-            sendLog("ping==>ws异常中断")
-          },
-          heartFailFn() {
-            sendLog("ping==>ws重连失败")
-          },
           sendInterval: 2000,
           receiveInterval: 2000,
         },
-        onOpen: () => {
-          console.log("open")
-          IO.send({
-            sub: "add",
-            type: "five",
-            topic: "ETH/USDT",
-          })
-        },
-        onClose: () => {
-          console.log("close")
-        },
-        onMessage: (e) => {},
-        onError: () => {
-          console.log("error")
-        },
-        onReconnecting: () => {
-          console.log("reconnecting")
-        },
+      })
+
+      IO.onOpen(() => {
+        console.log("open")
+        IO.send({
+          sub: "add",
+          type: "five",
+          topic: "ETH/USDT",
+        })
+      })
+      IO.onClose(() => {
+        console.log("close")
+      })
+      IO.onMessage((e) => {
+        console.log(e.data)
+      })
+      IO.onError(() => {
+        console.log("error")
+      })
+      IO.onReconnecting(() => {
+        console.log("reconnecting")
+      })
+      IO.onReconnected(() => {
+        console.log("reconnected")
+      })
+      IO.onReconnectFailed(() => {
+        console.log("reconnect failed")
       })
     </script>
   </body>
