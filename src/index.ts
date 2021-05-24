@@ -1,7 +1,7 @@
-import ReceivingStrategy from "./enum/ReceivingStrategy"
-import WebSocketStatus from "./enum/WebSocketStatus"
-import Option from "./interfaces/Option"
-import { warn } from "./utils"
+import ReceivingStrategy from './enum/ReceivingStrategy'
+import WebSocketStatus from './enum/WebSocketStatus'
+import Option from './interfaces/Option'
+import { warn } from './utils'
 
 export default class BigoIO {
   static baseURL: string
@@ -15,10 +15,10 @@ export default class BigoIO {
   private heartBeatReceiptTimer: any // 心跳检查定时器
   private messageHeartBeatCheckList = [] // 心跳检查所需的消息列表
 
-  constructor(option: Option) {
+  constructor (option: Option) {
     this.checkOption(option)
     this.option = option
-    if (option.url.startsWith("/")) {
+    if (option.url.startsWith('/')) {
       this.url = BigoIO.baseURL + option.url
     }
     this.createConnection()
@@ -28,22 +28,22 @@ export default class BigoIO {
    * 检查配置项合法性
    * @param option 配置项
    */
-  checkOption(option) {
-    if (typeof window.WebSocket === "undefined") {
+  checkOption (option) {
+    if (typeof window.WebSocket === 'undefined') {
       warn("Your browser doesn't support websocket!")
     }
     if (!option || !Object.keys(option).length) {
-      warn("invalid options!")
+      warn('invalid options!')
     }
     if (!option.url) {
-      warn("invalid url!")
+      warn('invalid url!')
     }
   }
 
   /**
    * 创建连接
    */
-  createConnection() {
+  createConnection () {
     this.ws = new WebSocket(this.url)
     this.ws.onopen = this.onOpen.bind(this)
     this.ws.onclose = this.onClose.bind(this)
@@ -54,7 +54,7 @@ export default class BigoIO {
   /**
    * 创建一个IO实例
    */
-  static create(options) {
+  static create (options) {
     return new BigoIO(options)
   }
 
@@ -62,24 +62,25 @@ export default class BigoIO {
    * 开启事件
    * @param e event
    */
-  onOpen(e: any) {
-    this.option.warning && console.warn("websocket connected")
+  onOpen (e: any) {
+    this.option.warning && console.warn('websocket connected')
     if (this.option.onOpen) {
       this.option.onOpen(e)
     }
-    //心跳
+    // 心跳
     this.setHearBeat()
   }
+
   /**
    * 关闭事件
    * @param e event
    */
-  onClose(e: any) {
+  onClose (e: any) {
     if (this.option.onClose) {
       this.option.onClose(e)
     }
-    this.option.warning && console.warn("websocket is closed,code:" + e.code)
-    //重连
+    this.option.warning && console.warn('websocket is closed,code:' + e.code)
+    // 重连
     if (this.option.reconnect) {
       setTimeout(() => {
         this.reConnect()
@@ -91,7 +92,7 @@ export default class BigoIO {
    * 接受信息事件
    * @param e event
    */
-  onMessage(e: any) {
+  onMessage (e: any) {
     if (this.option.onMessage) {
       this.option.onMessage(e)
     }
@@ -104,7 +105,7 @@ export default class BigoIO {
       this.option.warning &&
         console.warn(
           this.option.forceDisconnectThreshold +
-            "ms seconds no message. Force disconnect"
+            'ms seconds no message. Force disconnect'
         )
       this.close()
     }, this.option.forceDisconnectThreshold)
@@ -114,7 +115,7 @@ export default class BigoIO {
    * 错误事件
    * @param e event
    */
-  onError(e: any) {
+  onError (e: any) {
     if (this.option.onError) {
       this.option.onError(e)
     }
@@ -124,22 +125,22 @@ export default class BigoIO {
    * 发送信息
    * @param message 信息
    */
-  send(message: Object) {
+  send (message: Object) {
     if (!this.ws) return
     if (this.ws.readyState !== WebSocketStatus.OPEN) {
-      warn("websocket has been closed or not ready yet!")
+      warn('websocket has been closed or not ready yet!')
     }
-    let _message = JSON.stringify(message)
+    const _message = JSON.stringify(message)
     this.ws.send(_message)
   }
 
   /**
    * 关闭连接
    */
-  close() {
+  close () {
     if (!this.ws || this.ws.readyState === WebSocketStatus.CLOSED) return
     if (this.ws.readyState === WebSocketStatus.CLOSING) {
-      warn("websocket is closing!")
+      warn('websocket is closing!')
     }
     // 关闭心跳
     if (this.heartBeatTimer) {
@@ -155,8 +156,8 @@ export default class BigoIO {
   /**
    * 重新连接
    */
-  reConnect() {
-    this.option.warning && console.warn("websocket connecting...")
+  reConnect () {
+    this.option.warning && console.warn('websocket connecting...')
     if (this.option.onReconnecting) {
       this.option.onReconnecting()
     }
@@ -166,13 +167,13 @@ export default class BigoIO {
   /**
    * 心跳机制
    */
-  setHearBeat() {
+  setHearBeat () {
     const { enable, sendMessage, sendInterval } = this.option.heartBeat
     if (!enable) return
     this.heartBeatTimer = setInterval(() => {
       if (this.ws.readyState !== WebSocketStatus.OPEN) return
       this.send({
-        sub: sendMessage || "ping",
+        sub: sendMessage || 'ping'
       })
       this.heartBeatReceiptFlag = true
     }, sendInterval || 1000)
@@ -183,7 +184,7 @@ export default class BigoIO {
    * @param message
    * @returns
    */
-  checkHeartBeat(message) {
+  checkHeartBeat (message) {
     const { enable, receiveMessage, receiveInterval, breakOffHandler } =
       this.option.heartBeat
 
@@ -195,7 +196,7 @@ export default class BigoIO {
     this.heartBeatReceiptTimer = setTimeout(() => {
       if (!this.findHeartBeatReceipt(receiveMessage)) {
         this.option.heartBeat.warning &&
-          console.warn("heart beat message not found")
+          console.warn('heart beat message not found')
         breakOffHandler && breakOffHandler()
       }
       this.messageHeartBeatCheckList = []
@@ -209,7 +210,7 @@ export default class BigoIO {
    * 默认为 match 模式
    * @param receiveMessage
    */
-  private findHeartBeatReceipt(receiveMessage: any): boolean {
+  private findHeartBeatReceipt (receiveMessage: any): boolean {
     return this.messageHeartBeatCheckList.some((message) => {
       switch (receiveMessage.receivingStrategy) {
         case ReceivingStrategy.absolutely:

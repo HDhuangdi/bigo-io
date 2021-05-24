@@ -1,3 +1,4 @@
+/* eslint-disable */
 enum ReceivingStrategy {
   CONNECTING = 0,
   OPEN = 1,
