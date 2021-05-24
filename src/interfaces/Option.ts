@@ -1,4 +1,4 @@
-import ReceivingStrategy from "../enum/ReceivingStrategy"
+import ReceivingStrategy from '../enum/ReceivingStrategy'
 
 interface Option {
   url: string
