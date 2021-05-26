@@ -62,7 +62,6 @@ export default class BigoIO {
   createConnection () {
     if (this.ws) return
     this.ws = new WebSocket(this.url)
-
     this.ws.onopen = this.onOpenProxy.bind(this)
     this.ws.onclose = this.onCloseProxy.bind(this)
     this.ws.onmessage = this.onMessageProxy.bind(this)
@@ -98,6 +97,7 @@ export default class BigoIO {
       if (this.option.hooks.onReconnected) {
         this.option.hooks.onReconnected(e)
       }
+
       if (this.reconnectedHandler) {
         this.reconnectedHandler(e)
       }
@@ -275,7 +275,7 @@ export default class BigoIO {
    * @returns
    */
   onReconnecting (handler) {
-    if (handler) return
+    if (!handler) return
     this.reconnectingHandler = handler
   }
 
@@ -285,7 +285,7 @@ export default class BigoIO {
    * @returns
    */
   onReconnected (handler) {
-    if (handler) return
+    if (!handler) return
     this.reconnectedHandler = handler
   }
 
@@ -295,7 +295,7 @@ export default class BigoIO {
    * @returns
    */
   onReconnectFailed (handler) {
-    if (handler) return
+    if (!handler) return
     this.reconnectFailedHandler = handler
   }
 
@@ -324,7 +324,7 @@ export default class BigoIO {
     this.heartBeatTimer = setInterval(() => {
       if (this.ws.readyState !== WebSocketStatus.OPEN) return
       this.send({
-        sub: sendMessage || 'ping'
+        sub: sendMessage === undefined ? 'ping' : sendMessage
       })
       this.heartBeatReceiptFlag = true
     }, sendInterval || 1000)

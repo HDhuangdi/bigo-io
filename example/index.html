@@ -48,7 +48,7 @@
           warning: true,
           sendMessage: "ping",
           receiveMessage: {
-            handle: "pong",
+            pattern: "pong",
             receivingStrategy: "match",
             regExp: /^pong/,
           },
@@ -69,7 +69,7 @@
         console.log("close")
       })
       IO.onMessage((e) => {
-        console.log(e.data)
+        // console.log(e.data)
       })
       IO.onError(() => {
         console.log("error")
