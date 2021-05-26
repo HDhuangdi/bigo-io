@@ -46,7 +46,7 @@
         heartBeat: {
           enable: true,
           warning: true,
-          sendMessage: "ping",
+          sendMessage: { sub: "ping" },
           receiveMessage: {
             pattern: "pong",
             receivingStrategy: "match",
