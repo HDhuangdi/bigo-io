@@ -323,9 +323,7 @@ export default class BigoIO {
     if (!enable) return
     this.heartBeatTimer = setInterval(() => {
       if (this.ws.readyState !== WebSocketStatus.OPEN) return
-      this.send({
-        sub: sendMessage === undefined ? 'ping' : sendMessage
-      })
+      this.send(sendMessage === undefined ? 'ping' : sendMessage)
       this.heartBeatReceiptFlag = true
     }, sendInterval || 1000)
   }
